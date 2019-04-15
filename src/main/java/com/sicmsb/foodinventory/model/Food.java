@@ -8,6 +8,10 @@ public class Food {
 	private String name;
 	private String description;
 
+	public Food() {
+		super();
+	}
+
 	public String getName() {
 		return name;
 	}
