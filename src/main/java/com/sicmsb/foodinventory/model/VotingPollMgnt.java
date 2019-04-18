@@ -38,6 +38,12 @@ public class VotingPollMgnt implements Serializable {
 	@Column(name = "vote_end_date")
 	private Date voteEndDate;
 
+	@Column(name = "food_avai_start_date")
+	private Date foodAvailableStartDate;
+
+	@Column(name = "food_avai_end_date")
+	private Date foodAvailableEndDate;
+	
 	@Version
 	@Column(name = "version", nullable = false)
 	private Integer version;
@@ -90,6 +96,22 @@ public class VotingPollMgnt implements Serializable {
 
 	public void setVoteEndDate(Date voteEndDate) {
 		this.voteEndDate = voteEndDate;
+	}
+
+	public Date getFoodAvailableStartDate() {
+		return foodAvailableStartDate;
+	}
+
+	public void setFoodAvailableStartDate(Date foodAvailableStartDate) {
+		this.foodAvailableStartDate = foodAvailableStartDate;
+	}
+
+	public Date getFoodAvailableEndDate() {
+		return foodAvailableEndDate;
+	}
+
+	public void setFoodAvailableEndDate(Date foodAvailableEndDate) {
+		this.foodAvailableEndDate = foodAvailableEndDate;
 	}
 
 	public Integer getVersion() {

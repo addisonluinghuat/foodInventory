@@ -1,19 +1,21 @@
 package com.sicmsb.foodinventory.model.payload.response;
 
-import java.util.List;
+import java.util.Date;
 
-import com.sicmsb.foodinventory.dto.AvaiFoodItemDTO;
+import com.sicmsb.foodinventory.dto.VotingFoodOptionsDTO;
 
 public class ResponseVoteOptionsPayload {
+	
 
-	private List<AvaiFoodItemDTO> foodList;
+	private VotingFoodOptionsDTO foodVoteOptionsList;
 
-	public List<AvaiFoodItemDTO> getFoodList() {
-		return foodList;
+	public VotingFoodOptionsDTO getFoodVoteOptionsList() {
+		return foodVoteOptionsList;
 	}
 
-	public void setFoodList(List<AvaiFoodItemDTO> foodList) {
-		this.foodList = foodList;
+	public void setFoodVoteOptionsList(VotingFoodOptionsDTO foodVoteOptionsList) {
+		this.foodVoteOptionsList = foodVoteOptionsList;
 	}
-
+	
+	
 }

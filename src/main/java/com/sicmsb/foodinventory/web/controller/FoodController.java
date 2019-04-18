@@ -67,7 +67,7 @@ public class FoodController {
 		Header header = new Header();
 		ResponseBase<ResponseVoteOptionsPayload> response = CommonUtil.genResponseBase(header);
 		ResponseVoteOptionsPayload responseVoteOptionsPayload = new ResponseVoteOptionsPayload();
-		responseVoteOptionsPayload.setFoodList(avaiFoodItemService.getAvaiFoodItem());
+		responseVoteOptionsPayload.setFoodVoteOptionsList(votingPollMgntService.availableFoodVoteOptionsAPIService());
 		response.setPayload(responseVoteOptionsPayload);
 		return ResponseEntity.ok(response);
 	}
