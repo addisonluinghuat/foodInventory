@@ -7,12 +7,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sicmsb.foodinventory.dto.VotingFoodOptionsDTO;
 import com.sicmsb.foodinventory.dto.VotingPollMgntDTO;
 import com.sicmsb.foodinventory.model.VotingPollMgnt;
+import com.sicmsb.foodinventory.model.Food;
+import com.sicmsb.foodinventory.model.FoodVoteOptions;
 import com.sicmsb.foodinventory.model.VotingPollItem;
 import com.sicmsb.foodinventory.repository.VotingPollItemRepository;
 import com.sicmsb.foodinventory.repository.VotingPollMgntRepository;
@@ -22,6 +26,8 @@ import com.sicmsb.foodinventory.util.DateUtil;
 @Transactional
 @Service
 public class VotingPollMgntServiceImpl implements VotingPollMgntService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(VotingPollMgntServiceImpl.class);
 
 	@Inject
 	private VotingPollMgntRepository votingPollMgntRepository;
@@ -42,7 +48,6 @@ public class VotingPollMgntServiceImpl implements VotingPollMgntService {
 	
 	public VotingPollMgnt retrieveCurrentVotingPoll() {
 		return votingPollMgntRepository.findVotingPollForCurrentPeriod(new Date());
-		
 	}
 	
 	public VotingFoodOptionsDTO retrieveAvailableFoodVoteOptions(VotingPollMgnt currentVotingPoll) {
@@ -50,18 +55,21 @@ public class VotingPollMgntServiceImpl implements VotingPollMgntService {
 		VotingFoodOptionsDTO availableFoodVoteOptions = new VotingFoodOptionsDTO();
 		
 		List<VotingPollItem> votingFoodOptionsList = votingPollItemRepository.findByVotingPollManagementId(currentVotingPoll.getId());
-		List<String> foodNameList = new ArrayList<>();
+		List<FoodVoteOptions> foodNameList = new ArrayList<>();
 		
 		for (VotingPollItem foodList : votingFoodOptionsList) {
-			foodNameList.add(foodList.getFoodName());
+			FoodVoteOptions foodOption = new FoodVoteOptions();
+			foodOption.setId(foodList.getId());
+			foodOption.setName(foodList.getFoodName());
+			foodNameList.add(foodOption);
 		}
 		
 
 		availableFoodVoteOptions.setListOfAvailableFoodToVote(foodNameList);
-		availableFoodVoteOptions.setVotingPeriodStartDate(DateUtil.formatDate(currentVotingPoll.getVoteStartDate()));
-		availableFoodVoteOptions.setVotingPeriodEndDate(DateUtil.formatDate(currentVotingPoll.getVoteEndDate()));
-		availableFoodVoteOptions.setFoodAvailableStartDate(DateUtil.formatDate(currentVotingPoll.getFoodAvailableStartDate()));
-		availableFoodVoteOptions.setFoodAvailableEndDate(DateUtil.formatDate(currentVotingPoll.getFoodAvailableEndDate()));
+		availableFoodVoteOptions.setVotingPeriodStartDate(currentVotingPoll.getVoteStartDate());
+		availableFoodVoteOptions.setVotingPeriodEndDate(currentVotingPoll.getVoteEndDate());
+		availableFoodVoteOptions.setFoodAvailableStartDate(currentVotingPoll.getFoodAvailableStartDate());
+		availableFoodVoteOptions.setFoodAvailableEndDate(currentVotingPoll.getFoodAvailableEndDate());
 		return availableFoodVoteOptions;
 
 	}

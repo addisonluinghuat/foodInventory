@@ -11,7 +11,7 @@ public class Food {
 	public Food() {
 		super();
 	}
-
+	
 	public String getName() {
 		return name;
 	}

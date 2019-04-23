@@ -3,7 +3,9 @@ package com.sicmsb.foodinventory.dto;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sicmsb.foodinventory.model.Food;
+import com.sicmsb.foodinventory.model.FoodVoteOptions;
 
 import io.swagger.annotations.ApiModelProperty;
 
@@ -11,58 +13,62 @@ public class VotingFoodOptionsDTO {
 
 
 	@ApiModelProperty(value = "The starting date for the voting poll", required = true)
-	private String votingPeriodStartDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private Date votingPeriodStartDate;
 
 	@ApiModelProperty(value = "The ending date for the voting poll", required = true)
-	private String votingPeriodEndDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private Date votingPeriodEndDate;
 	
 	@ApiModelProperty(value = "The food available period (start date)", required = true)
-	private String foodAvailableStartDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private Date foodAvailableStartDate;
 
 	@ApiModelProperty(value = "The food available period (end date)", required = true)
-	private String foodAvailableEndDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private Date foodAvailableEndDate;
 
 	@ApiModelProperty(value = "List of Available Food to Vote", required = true)
-	private List<String> listOfAvailableFoodToVote;
+	private List<FoodVoteOptions> listOfAvailableFoodToVote;
 
 
-	public String getVotingPeriodStartDate() {
+	public Date getVotingPeriodStartDate() {
 		return votingPeriodStartDate;
 	}
 
-	public void setVotingPeriodStartDate(String startDate) {
-		this.votingPeriodStartDate = startDate;
+	public void setVotingPeriodStartDate(Date votingPeriodStartDate) {
+		this.votingPeriodStartDate = votingPeriodStartDate;
 	}
 
-	public String getVotingPeriodEndDate() {
+	public Date getVotingPeriodEndDate() {
 		return votingPeriodEndDate;
 	}
 
-	public void setVotingPeriodEndDate(String endDate) {
-		this.votingPeriodEndDate = endDate;
+	public void setVotingPeriodEndDate(Date votingPeriodEndDate) {
+		this.votingPeriodEndDate = votingPeriodEndDate;
 	}
 
-	public List<String> getListOfAvailableFoodToVote() {
+	public List<FoodVoteOptions> getListOfAvailableFoodToVote() {
 		return listOfAvailableFoodToVote;
 	}
 	
-	public void setListOfAvailableFoodToVote(List<String> listOfAvailableFoodToVote) {
+	public void setListOfAvailableFoodToVote(List<FoodVoteOptions> listOfAvailableFoodToVote) {
 		this.listOfAvailableFoodToVote = listOfAvailableFoodToVote;
 	}
 
-	public String getFoodAvailableStartDate() {
+	public Date getFoodAvailableStartDate() {
 		return foodAvailableStartDate;
 	}
 
-	public void setFoodAvailableStartDate(String foodAvailableStartDate) {
+	public void setFoodAvailableStartDate(Date foodAvailableStartDate) {
 		this.foodAvailableStartDate = foodAvailableStartDate;
 	}
 
-	public String getFoodAvailableEndDate() {
+	public Date getFoodAvailableEndDate() {
 		return foodAvailableEndDate;
 	}
 
-	public void setFoodAvailableEndDate(String foodAvailableEndDate) {
+	public void setFoodAvailableEndDate(Date foodAvailableEndDate) {
 		this.foodAvailableEndDate = foodAvailableEndDate;
 	}
 
