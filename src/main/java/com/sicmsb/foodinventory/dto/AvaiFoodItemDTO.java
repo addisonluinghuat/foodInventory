@@ -4,9 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class AvaiFoodItemDTO {
 
-	@ApiModelProperty(value = "The unique identifier of the given available food item", readOnly = true)
+	@ApiModelProperty(value = "The unique identifier of the given available food management", readOnly = true)
 	private Long id;
-
+	
 	@ApiModelProperty(value = "The unique identifier of the given available food management", readOnly = true)
 	private Long avaiFoodManagementId;
 

@@ -14,13 +14,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sicmsb.foodinventory.dto.AvaiFoodItemDTO;
+import com.sicmsb.foodinventory.dto.AvaiFoodManagementDTO;
 import com.sicmsb.foodinventory.dto.VotingPollMgntDTO;
+import com.sicmsb.foodinventory.model.AvaiFoodManagement;
 import com.sicmsb.foodinventory.model.Food;
 import com.sicmsb.foodinventory.model.payload.request.Header;
 import com.sicmsb.foodinventory.model.payload.response.ResponseBase;
+import com.sicmsb.foodinventory.model.payload.response.ResponseCreateFoodPayload;
 import com.sicmsb.foodinventory.model.payload.response.ResponseVoteOptionsPayload;
 import com.sicmsb.foodinventory.model.payload.response.ResponseVotingPollPayload;
 import com.sicmsb.foodinventory.service.AvaiFoodItemService;
+import com.sicmsb.foodinventory.service.AvaiFoodManagementService;
 import com.sicmsb.foodinventory.service.EmployeeInfoService;
 import com.sicmsb.foodinventory.service.VotingPollMgntService;
 import com.sicmsb.foodinventory.util.CommonUtil;
@@ -44,6 +49,9 @@ public class FoodController {
 
 	@Inject
 	private EmployeeInfoService employeeInfoService;
+	
+	@Inject
+	private AvaiFoodManagementService avaiFoodManagementService;
 
 	private static final Logger logger = LoggerFactory.getLogger(FoodController.class);
 
@@ -105,16 +113,45 @@ public class FoodController {
 		return foodList;
 	}
 
+	//Create Food List API
 	@ApiOperation(value = "Create List of Food for current period", response = Food.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 401, message = "Unauthorized") })
 	@RequestMapping(value = "/food/list", method = RequestMethod.POST, produces = "application/json")
-	public List<Food> createCurrPerFoodList() {
-		logger.info("Starting Create List of Food for current period");
-		List<Food> foodList = new ArrayList<>();
-		logger.info("Ending Create List of Food for current period");
-		return foodList;
+	public ResponseEntity<?> createFood(
+			@ApiParam("Create food list for current period.") @Valid @RequestBody AvaiFoodManagementDTO avaiFoodManagementDTO) {
+		logger.info("Starting Create Food List");
+		
+		// Set payload header
+		Header header = new Header();
+		
+		//set avaifoodManagement information in avaiFoodManagement object
+		AvaiFoodManagement avaiFoodManagement = avaiFoodManagementService.createFoodManagement(avaiFoodManagementDTO);
+		
+	    //avaiFoodItemService.createFoodManagement(avaiFoodManagementDTO.getAvailableFoodItemList());
+		//List<AvaiFoodItemDTO> listOfAvailableFoodToVote = new ArrayList<>();
+	    
+		//Include available food item information inside avaiFoodManagement 
+		//food Item in for each loop represent each item inside the available food item list
+	    avaiFoodManagementDTO.getAvailableFoodItemList().forEach(foodItem -> {
+			
+	    	//get avaiFoodManagement id from avaiFoodManagement table and set to avaiFoodItem table avaiFoodManagement id (foreign key)
+	    	foodItem.setAvaiFoodManagementId(avaiFoodManagement.getId());
+	    	
+	    	//Set food item and save to avai food item table
+	    	avaiFoodItemService.createFoodItem(foodItem);
+	    	
+		});
+		
+	    //response payload setting
+	    ResponseBase<ResponseCreateFoodPayload> response = CommonUtil.genResponseBase(header);
+
+		logger.info("Ending Create food list for current period");
+		
+		
+		return ResponseEntity.ok(response);
 	}
+	
 
 	@ApiOperation(value = "View List of Food for current period", response = Food.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),

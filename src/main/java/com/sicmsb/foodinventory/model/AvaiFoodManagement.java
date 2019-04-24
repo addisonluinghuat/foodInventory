@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Version;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -18,8 +19,8 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
-@Table(name = "AVAI_FOOD_ITEM")
-public class AvaiFoodItem implements Serializable {
+@Table(name = "AVAI_FOOD_MANAGEMENT")
+public class AvaiFoodManagement implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -28,12 +29,16 @@ public class AvaiFoodItem implements Serializable {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Column(name = "avai_food_management_id", nullable = false)
-	private Long avaiFoodMgntId;
-
-	@Column(name = "food_name", length = 100, nullable = false)
-	private String foodName;
+	@Column(name = "start_date")
+	private Date startDate;
 	
+	@Column(name = "end_date")
+	private Date endDate;
+
+	@Version
+	@Column(name = "version", nullable = false)
+	private Integer version;
+
 	@Column(name = "created_by", length = 200, nullable = false, updatable = false)
 	@CreatedBy
 	private String createdBy;
@@ -51,6 +56,38 @@ public class AvaiFoodItem implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@LastModifiedDate
 	private Date lastModifiedDate;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
 
 	public String getCreatedBy() {
 		return createdBy;
@@ -84,28 +121,9 @@ public class AvaiFoodItem implements Serializable {
 		this.lastModifiedDate = lastModifiedDate;
 	}
 
-	public Long getId() {
-		return id;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Long getAvaiFoodMgntId() {
-		return avaiFoodMgntId;
-	}
-
-	public void setAvaiFoodMgntId(Long avaiFoodMgntId) {
-		this.avaiFoodMgntId = avaiFoodMgntId;
-	}
-
-	public String getFoodName() {
-		return foodName;
-	}
-
-	public void setFoodName(String foodName) {
-		this.foodName = foodName;
-	}
+	
 
 }
