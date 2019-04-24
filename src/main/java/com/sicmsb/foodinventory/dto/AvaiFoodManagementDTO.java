@@ -3,6 +3,8 @@ package com.sicmsb.foodinventory.dto;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.annotations.ApiModelProperty;
 
 public class AvaiFoodManagementDTO {
@@ -11,9 +13,11 @@ public class AvaiFoodManagementDTO {
 //	private Long id;
 
 	@ApiModelProperty(value = "Start date of the available food management", required = true)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date startDate;
 
 	@ApiModelProperty(value = "End date of the available food management", required = true)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date endDate;
 
 	@ApiModelProperty(value = "Available food item list", required = true)
