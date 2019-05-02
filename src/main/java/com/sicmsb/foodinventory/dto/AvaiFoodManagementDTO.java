@@ -9,8 +9,9 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class AvaiFoodManagementDTO {
 
-//	@ApiModelProperty(value = "The unique identifier of the given available food item", readOnly = true)
-//	private Long id;
+	// @ApiModelProperty(value = "The unique identifier of the given available food
+	// item", readOnly = true)
+	// private Long id;
 
 	@ApiModelProperty(value = "Start date of the available food management", required = true)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -22,14 +23,19 @@ public class AvaiFoodManagementDTO {
 
 	@ApiModelProperty(value = "Available food item list", required = true)
 	private List<AvaiFoodItemDTO> availableFoodItemList;
-	
+
+	public AvaiFoodManagementDTO() {
+		super();
+
+	}
+
 	public AvaiFoodManagementDTO(Date startDate, Date endDate) {
 		super();
-		//this.id = id;
+		// this.id = id;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
-	
+
 	public List<AvaiFoodItemDTO> getAvailableFoodItemList() {
 		return availableFoodItemList;
 	}

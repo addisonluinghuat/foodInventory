@@ -1,8 +1,8 @@
 package com.sicmsb.foodinventory.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,26 +23,27 @@ public class AvaiFoodItemServiceImpl implements AvaiFoodItemService {
 	@Transactional(readOnly = true)
 	public List<AvaiFoodItemDTO> getAvaiFoodItem() {
 		// new AvaiFoodItemDTO(null, null, null);
-		return avaiFoodItemRepository.findAll().stream()
-				.map(entity -> new AvaiFoodItemDTO(entity.getId(), entity.getAvaiFoodMgntId(), entity.getFoodName()))
-				.collect(Collectors.toList());
+		// return avaiFoodItemRepository.findAll().stream()
+		// .map(entity -> new AvaiFoodItemDTO(entity.getId(),
+		// entity.getAvaiFoodMgntId(), entity.getFoodName()))
+		// .collect(Collectors.toList());
+		return new ArrayList<>();
 
 	}
 
 	@Override
 	public AvaiFoodItem createFoodItem(AvaiFoodItemDTO avaiFoodItemDTO) {
-		
-		//set available food item from avaiFoodItemDTO to AvaiFoodItem model and insert to avaiFoodItem database
+
+		// set available food item from avaiFoodItemDTO to AvaiFoodItem model and insert
+		// to avaiFoodItem database
 		AvaiFoodItem avaiFoodItem = new AvaiFoodItem();
-		
-		avaiFoodItem.setAvaiFoodMgntId(avaiFoodItemDTO.getAvaiFoodManagementId());
+
+		// avaiFoodItem.setAvaiFoodMgntId(avaiFoodItemDTO.getAvaiFoodManagementId());
 		avaiFoodItem.setFoodName(avaiFoodItemDTO.getFoodName());
 		avaiFoodItem.setCreatedBy("1");
 		avaiFoodItem.setCreatedDate(new Date());
-		
+
 		return avaiFoodItemRepository.save(avaiFoodItem);
 	}
-	
-	
 
 }

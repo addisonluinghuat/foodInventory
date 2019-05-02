@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sicmsb.foodinventory.dto.AvaiFoodItemDTO;
 import com.sicmsb.foodinventory.dto.AvaiFoodManagementDTO;
 import com.sicmsb.foodinventory.dto.VotingPollMgntDTO;
 import com.sicmsb.foodinventory.model.AvaiFoodManagement;
@@ -49,7 +48,7 @@ public class FoodController {
 
 	@Inject
 	private EmployeeInfoService employeeInfoService;
-	
+
 	@Inject
 	private AvaiFoodManagementService avaiFoodManagementService;
 
@@ -113,7 +112,7 @@ public class FoodController {
 		return foodList;
 	}
 
-	//Create Food List API
+	// Create Food List API
 	@ApiOperation(value = "Create List of Food for current period", response = Food.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 401, message = "Unauthorized") })
@@ -121,54 +120,52 @@ public class FoodController {
 	public ResponseEntity<?> createFood(
 			@ApiParam("Create food list for current period.") @Valid @RequestBody AvaiFoodManagementDTO avaiFoodManagementDTO) {
 		logger.info("Starting Create Food List");
-		
+
 		// Set payload header
 		Header header = new Header();
-		
-		//set avaifoodManagement information in avaiFoodManagement object
+
+		// set avaifoodManagement information in avaiFoodManagement object
 		AvaiFoodManagement avaiFoodManagement = avaiFoodManagementService.createFoodManagement(avaiFoodManagementDTO);
-		
-	    //avaiFoodItemService.createFoodManagement(avaiFoodManagementDTO.getAvailableFoodItemList());
-		//List<AvaiFoodItemDTO> listOfAvailableFoodToVote = new ArrayList<>();
-	    
-		//Include available food item information inside avaiFoodManagement 
-		//food Item in for each loop represent each item inside the available food item list
-	    avaiFoodManagementDTO.getAvailableFoodItemList().forEach(foodItem -> {
-			
-	    	//get avaiFoodManagement id from avaiFoodManagement table and set to avaiFoodItem table avaiFoodManagement id (foreign key)
-	    	foodItem.setAvaiFoodManagementId(avaiFoodManagement.getId());
-	    	
-	    	//Set food item and save to avai food item table
-	    	avaiFoodItemService.createFoodItem(foodItem);
-	    	
+
+		// avaiFoodItemService.createFoodManagement(avaiFoodManagementDTO.getAvailableFoodItemList());
+		// List<AvaiFoodItemDTO> listOfAvailableFoodToVote = new ArrayList<>();
+
+		// Include available food item information inside avaiFoodManagement
+		// food Item in for each loop represent each item inside the available food item
+		// list
+		avaiFoodManagementDTO.getAvailableFoodItemList().forEach(foodItem -> {
+
+			// get avaiFoodManagement id from avaiFoodManagement table and set to
+			// avaiFoodItem table avaiFoodManagement id (foreign key)
+			// foodItem.setAvaiFoodManagementId(avaiFoodManagement.getId());
+
+			// Set food item and save to avai food item table
+			avaiFoodItemService.createFoodItem(foodItem);
+
 		});
-		
-	    //response payload setting
-	    ResponseBase<ResponseCreateFoodPayload> response = CommonUtil.genResponseBase(header);
+
+		// response payload setting
+		ResponseBase<ResponseCreateFoodPayload> response = CommonUtil.genResponseBase(header);
 
 		logger.info("Ending Create food list for current period");
-		
-		
+
 		return ResponseEntity.ok(response);
 	}
-	
 
 	@ApiOperation(value = "View List of Food for current period", response = Food.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 401, message = "Unauthorized") })
 	@RequestMapping(value = "/food/view-list", method = RequestMethod.GET, produces = "application/json")
-	public List<Food> getCurrPerFoodList() {
+	public ResponseEntity<AvaiFoodManagementDTO> getCurrPerFoodList() {
 		logger.info("Starting View List of Food for current period");
-		List<Food> foodList = new ArrayList<>();
-		// Since we dont have food service yet
-		// I will just comment out all my implementation to avoid compilation error
-		// Date currTime = new Date();
-		// return foodService.getCurrPerFoodList(currTime);
-		// The logic will be like this
-		// We will find the food list based on the current time
-		// If the current time is in between one of the period from database
-		// Get all the food details between that period and return it to the client side
+		AvaiFoodManagementDTO avaiFoodManagementDTO = null;
+		try {
+			avaiFoodManagementDTO = avaiFoodManagementService.getCurrPerFoodManagement();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
 		logger.info("Ending View List of Food for current period");
-		return foodList;
+		return ResponseEntity.ok(avaiFoodManagementDTO);
 	}
 }

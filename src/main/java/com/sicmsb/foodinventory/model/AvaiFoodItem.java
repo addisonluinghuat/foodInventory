@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,12 +31,13 @@ public class AvaiFoodItem implements Serializable {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
-	@Column(name = "avai_food_management_id", nullable = false)
-	private Long avaiFoodMgntId;
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
+	@JoinColumn(name = "avai_food_management_id", nullable = false)
+	private AvaiFoodManagement avaiFoodManagement;
 
 	@Column(name = "food_name", length = 100, nullable = false)
 	private String foodName;
-	
+
 	@Column(name = "created_by", length = 200, nullable = false, updatable = false)
 	@CreatedBy
 	private String createdBy;
@@ -92,12 +96,12 @@ public class AvaiFoodItem implements Serializable {
 		this.id = id;
 	}
 
-	public Long getAvaiFoodMgntId() {
-		return avaiFoodMgntId;
+	public AvaiFoodManagement getAvaiFoodManagement() {
+		return avaiFoodManagement;
 	}
 
-	public void setAvaiFoodMgntId(Long avaiFoodMgntId) {
-		this.avaiFoodMgntId = avaiFoodMgntId;
+	public void setAvaiFoodManagement(AvaiFoodManagement avaiFoodManagement) {
+		this.avaiFoodManagement = avaiFoodManagement;
 	}
 
 	public String getFoodName() {

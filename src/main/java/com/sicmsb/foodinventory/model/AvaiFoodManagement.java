@@ -2,12 +2,16 @@ package com.sicmsb.foodinventory.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,13 +35,16 @@ public class AvaiFoodManagement implements Serializable {
 
 	@Column(name = "start_date")
 	private Date startDate;
-	
+
 	@Column(name = "end_date")
 	private Date endDate;
 
 	@Version
 	@Column(name = "version", nullable = false)
 	private Integer version;
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "avaiFoodManagement")
+	private Set<AvaiFoodItem> avaiFoodItems = new HashSet<>(0);
 
 	@Column(name = "created_by", length = 200, nullable = false, updatable = false)
 	@CreatedBy
@@ -89,6 +96,14 @@ public class AvaiFoodManagement implements Serializable {
 		this.version = version;
 	}
 
+	public Set<AvaiFoodItem> getAvaiFoodItems() {
+		return avaiFoodItems;
+	}
+
+	public void setAvaiFoodItems(Set<AvaiFoodItem> avaiFoodItems) {
+		this.avaiFoodItems = avaiFoodItems;
+	}
+
 	public String getCreatedBy() {
 		return createdBy;
 	}
@@ -124,6 +139,5 @@ public class AvaiFoodManagement implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
 
 }
