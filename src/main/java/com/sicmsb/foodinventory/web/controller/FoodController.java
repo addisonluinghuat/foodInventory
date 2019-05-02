@@ -152,7 +152,7 @@ public class FoodController {
 		return ResponseEntity.ok(response);
 	}
 
-	@ApiOperation(value = "View List of Food for current period", response = Food.class)
+	@ApiOperation(value = "View List of Food for current period", response = AvaiFoodManagementDTO.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 401, message = "Unauthorized") })
 	@RequestMapping(value = "/food/view-list", method = RequestMethod.GET, produces = "application/json")
