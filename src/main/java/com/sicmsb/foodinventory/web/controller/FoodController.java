@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sicmsb.foodinventory.dto.AvaiFoodManagementDTO;
 import com.sicmsb.foodinventory.dto.VotingPollMgntDTO;
+import com.sicmsb.foodinventory.exception.BaseException;
 import com.sicmsb.foodinventory.model.AvaiFoodManagement;
 import com.sicmsb.foodinventory.model.Food;
 import com.sicmsb.foodinventory.model.payload.request.Header;
@@ -118,7 +119,8 @@ public class FoodController {
 			@ApiResponse(code = 401, message = "Unauthorized") })
 	@RequestMapping(value = "/food/list", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<?> createFood(
-			@ApiParam("Create food list for current period.") @Valid @RequestBody AvaiFoodManagementDTO avaiFoodManagementDTO) {
+			@ApiParam("Create food list for current period.") @Valid @RequestBody AvaiFoodManagementDTO avaiFoodManagementDTO)
+			throws BaseException {
 		logger.info("Starting Create Food List");
 
 		// Set payload header
@@ -140,7 +142,7 @@ public class FoodController {
 			// foodItem.setAvaiFoodManagementId(avaiFoodManagement.getId());
 
 			// Set food item and save to avai food item table
-			avaiFoodItemService.createFoodItem(foodItem);
+			avaiFoodItemService.createFoodItem(foodItem, avaiFoodManagement);
 
 		});
 

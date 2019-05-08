@@ -33,9 +33,11 @@ public class AvaiFoodManagement implements Serializable {
 	@Column(name = "id", nullable = false)
 	private Long id;
 
+	@Temporal(TemporalType.DATE)
 	@Column(name = "start_date")
 	private Date startDate;
 
+	@Temporal(TemporalType.DATE)
 	@Column(name = "end_date")
 	private Date endDate;
 

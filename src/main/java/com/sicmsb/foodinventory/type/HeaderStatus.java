@@ -1,22 +1,18 @@
 package com.sicmsb.foodinventory.type;
 
 public enum HeaderStatus {
+	SUCCESS("success"),
 
-	SUCCESS("200", "success");
+	ERROR("error");
 
-	private final String code;
-	private final String description;
+	private String status;
 
-	private HeaderStatus(String code, String description) {
-		this.code = code;
-		this.description = description;
+	private HeaderStatus(String status) {
+		this.status = status;
 	}
 
-	public String getCode() {
-		return code;
+	public String getStatus() {
+		return status;
 	}
 
-	public String getDescription() {
-		return description;
-	}
 }

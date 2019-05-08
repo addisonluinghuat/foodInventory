@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sicmsb.foodinventory.dto.AvaiFoodItemDTO;
 import com.sicmsb.foodinventory.model.AvaiFoodItem;
+import com.sicmsb.foodinventory.model.AvaiFoodManagement;
 import com.sicmsb.foodinventory.repository.AvaiFoodItemRepository;
 
 @Transactional
@@ -32,13 +33,13 @@ public class AvaiFoodItemServiceImpl implements AvaiFoodItemService {
 	}
 
 	@Override
-	public AvaiFoodItem createFoodItem(AvaiFoodItemDTO avaiFoodItemDTO) {
+	public AvaiFoodItem createFoodItem(AvaiFoodItemDTO avaiFoodItemDTO, AvaiFoodManagement avaiFoodManagement) {
 
 		// set available food item from avaiFoodItemDTO to AvaiFoodItem model and insert
 		// to avaiFoodItem database
 		AvaiFoodItem avaiFoodItem = new AvaiFoodItem();
 
-		// avaiFoodItem.setAvaiFoodMgntId(avaiFoodItemDTO.getAvaiFoodManagementId());
+		avaiFoodItem.setAvaiFoodManagement(avaiFoodManagement);
 		avaiFoodItem.setFoodName(avaiFoodItemDTO.getFoodName());
 		avaiFoodItem.setCreatedBy("1");
 		avaiFoodItem.setCreatedDate(new Date());
