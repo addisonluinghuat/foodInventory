@@ -43,23 +43,23 @@ public class VotingPollMgnt implements Serializable {
 
 	@Column(name = "food_avai_end_date")
 	private Date foodAvailableEndDate;
-	
+
 	@Version
 	@Column(name = "version", nullable = false)
 	private Integer version;
 
-	@Column(name = "created_by", length = 200, nullable = false, updatable = false)
+	@Column(name = "created_by", nullable = false, updatable = false)
 	@CreatedBy
-	private String createdBy;
+	private Long createdBy;
 
 	@Column(name = "created_date", nullable = false, updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate
 	private Date createdDate = new Date();
 
-	@Column(name = "last_modified_by", length = 200)
+	@Column(name = "last_modified_by")
 	@LastModifiedBy
-	private String lastModifiedBy;
+	private Long lastModifiedBy;
 
 	@Column(name = "last_modified_date")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -122,11 +122,11 @@ public class VotingPollMgnt implements Serializable {
 		this.version = version;
 	}
 
-	public String getCreatedBy() {
+	public Long getCreatedBy() {
 		return createdBy;
 	}
 
-	public void setCreatedBy(String createdBy) {
+	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
 
@@ -138,11 +138,11 @@ public class VotingPollMgnt implements Serializable {
 		this.createdDate = createdDate;
 	}
 
-	public String getLastModifiedBy() {
+	public Long getLastModifiedBy() {
 		return lastModifiedBy;
 	}
 
-	public void setLastModifiedBy(String lastModifiedBy) {
+	public void setLastModifiedBy(Long lastModifiedBy) {
 		this.lastModifiedBy = lastModifiedBy;
 	}
 
