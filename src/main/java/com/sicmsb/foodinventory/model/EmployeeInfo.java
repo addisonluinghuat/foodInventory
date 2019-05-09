@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -23,8 +25,9 @@ public class EmployeeInfo implements Serializable {
 	@Column(name = "employee_no", nullable = false)
 	private String employeeNo;
 
-	@Column(name = "role_id", nullable = false)
-	private Long roleId;
+	@ManyToOne
+	@JoinColumn(name = "role_id", nullable = false)
+	private RoleInfo  roleId;
 
 	@Column(name = "name", length = 200, nullable = false)
 	private String name;
@@ -48,14 +51,6 @@ public class EmployeeInfo implements Serializable {
 		this.employeeNo = employeeNo;
 	}
 
-	public Long getRoleId() {
-		return roleId;
-	}
-
-	public void setRoleId(Long roleId) {
-		this.roleId = roleId;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -70,6 +65,14 @@ public class EmployeeInfo implements Serializable {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public RoleInfo getRoleInfo() {
+		return roleId;
+	}
+
+	public void setRoleInfo(RoleInfo roleId) {
+		this.roleId = roleId;
 	}
 
 }

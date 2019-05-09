@@ -2,6 +2,7 @@ package com.sicmsb.foodinventory.web.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -18,6 +19,7 @@ import com.sicmsb.foodinventory.dto.AvaiFoodManagementDTO;
 import com.sicmsb.foodinventory.dto.VotingPollMgntDTO;
 import com.sicmsb.foodinventory.exception.BaseException;
 import com.sicmsb.foodinventory.model.AvaiFoodManagement;
+import com.sicmsb.foodinventory.model.EmployeeInfo;
 import com.sicmsb.foodinventory.model.Food;
 import com.sicmsb.foodinventory.model.payload.request.Header;
 import com.sicmsb.foodinventory.model.payload.response.ResponseBase;
@@ -28,6 +30,7 @@ import com.sicmsb.foodinventory.service.AvaiFoodItemService;
 import com.sicmsb.foodinventory.service.AvaiFoodManagementService;
 import com.sicmsb.foodinventory.service.EmployeeInfoService;
 import com.sicmsb.foodinventory.service.VotingPollMgntService;
+import com.sicmsb.foodinventory.type.RoleType;
 import com.sicmsb.foodinventory.util.CommonUtil;
 
 import io.swagger.annotations.ApiOperation;
@@ -60,14 +63,47 @@ public class FoodController {
 			@ApiResponse(code = 401, message = "Unauthorized") })
 	@RequestMapping(value = "/food/voting-poll", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<?> votingPoll(
-			@ApiParam("Person information for a new person to be created.") @Valid @RequestBody VotingPollMgntDTO votingPollMgntDTO) {
+			@ApiParam("Person information for a new person to be created.") @Valid @RequestBody VotingPollMgntDTO votingPollMgntDTO)
+			throws BaseException {
 		logger.info("Starting Create Voting Poll");
 		Header header = new Header();
-		votingPollMgntService.create(votingPollMgntDTO);
+
+		final Long employeeId = votingPollMgntDTO.getEmployeeId();
+		final Optional<EmployeeInfo> employee = employeeInfoService.getEmployeeInfoById(employeeId);
+
+
+		// validate employee is exist and the role must equal to admin
+		if (!employee.isPresent() || !(RoleType.ADMIN.getCode().equals(employee.get().getRoleInfo().getRoleDesc()))) {
+			throw new BaseException(100, "This employee do not have authority to create voting poll");
+		}
+		//to check the input vote start date and  vote end date is exist in database
+		if (votingPollMgntService.duplicateVotePeriodExist(votingPollMgntDTO.getVoteStartDate(),
+				votingPollMgntDTO.getVoteEndDate())) {
+			throw new BaseException(101, "Duplicate voting period found in dabatase.");
+		}
+		//to check the input food available start date and  food available end date is exist in database
+		if (votingPollMgntService.duplicateAvailablePeriodExist(votingPollMgntDTO.getFoodAvailestartDate(),
+				votingPollMgntDTO.getFoodAvailableEndDate())) {
+			throw new BaseException(102, "Duplicate food available period found in dabatase.");
+		}
+
+		if (votingPollMgntDTO.getVoteStartDate().compareTo(votingPollMgntDTO.getVoteEndDate()) > 0) {
+			throw new BaseException(103, " vote start date cannot after vote end date");
+		}
+
+		if (votingPollMgntDTO.getFoodAvailestartDate().compareTo(votingPollMgntDTO.getFoodAvailableEndDate()) > 0) {
+			throw new BaseException(104, " food available start date cannot after food available end date");
+		}
+
+		if (votingPollMgntDTO.getVoteEndDate().compareTo(votingPollMgntDTO.getFoodAvailestartDate()) >= 0) {
+			throw new BaseException(105, " food available start date must be after vote end date");
+		}
+		
+		votingPollMgntService.createVotingNewVotingPoll(votingPollMgntDTO);
+		ResponseVotingPollPayload responseVotingPollPayload = new ResponseVotingPollPayload();
 		ResponseBase<ResponseVotingPollPayload> response = CommonUtil.genResponseBase(header);
-		// ResponseVotingPollPayload responseVotingPollPayload = new
-		// ResponseVotingPollPayload();
-		// response.setPayload(responseVotingPollPayload);
+		responseVotingPollPayload.setMsg("Voting poll had successfully created");
+		response.setPayload(responseVotingPollPayload);
 		logger.info("Ending Create Voting Poll");
 		return ResponseEntity.ok(response);
 	}
