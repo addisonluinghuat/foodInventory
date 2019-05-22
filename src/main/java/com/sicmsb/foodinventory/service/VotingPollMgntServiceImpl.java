@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sicmsb.foodinventory.dto.VotingFoodOptionsDTO;
 import com.sicmsb.foodinventory.dto.VotingPollItemDTO;
 import com.sicmsb.foodinventory.dto.VotingPollMgntDTO;
+import com.sicmsb.foodinventory.model.EmployeeInfo;
 import com.sicmsb.foodinventory.model.FoodVoteOptions;
 import com.sicmsb.foodinventory.model.VotingPollItem;
 import com.sicmsb.foodinventory.model.VotingPollMgnt;
@@ -62,7 +64,7 @@ public class VotingPollMgntServiceImpl implements VotingPollMgntService {
 	public void createVotingNewVotingPoll(VotingPollMgntDTO votingPollMgntDTO) {
 
 		logger.info("start createVotingNewVotingPoll");
-		
+
 		// initialize all variable
 		final Long employeeId = votingPollMgntDTO.getEmployeeId();
 		final String description = votingPollMgntDTO.getDescription();
@@ -72,8 +74,8 @@ public class VotingPollMgntServiceImpl implements VotingPollMgntService {
 		final Date foodAvailableEndDate = votingPollMgntDTO.getFoodAvailableEndDate();
 		final List<VotingPollItemDTO> votingPollItemList = votingPollMgntDTO.getVotingFoodItemList();
 		// create new voting poll management
-		
-		//save voting poll management record
+
+		// save voting poll management record
 		VotingPollMgnt votingPollMgnt = saveVotingPollMgnt(employeeId, description, voteStartDate, voteEndDate,
 				foodAvailableStartDate, foodAvailableEndDate);
 
@@ -82,7 +84,7 @@ public class VotingPollMgntServiceImpl implements VotingPollMgntService {
 		votingPollItemList.forEach(vpItem -> {
 			saveVotingPollItem(votingPollMgnt.getId(), vpItem, employeeId);
 		});
-		
+
 		logger.info("end createVotingNewVotingPoll");
 	}
 
@@ -124,10 +126,8 @@ public class VotingPollMgntServiceImpl implements VotingPollMgntService {
 
 		boolean isDuplicate = false;
 
-		VotingPollMgnt getDuplicateVoteStartDate = votingPollMgntRepository
-				.getBetweenVoteDate(voteStartDate);
-		VotingPollMgnt getDuplicateVoteEndDate = votingPollMgntRepository
-				.getBetweenVoteDate(voteEndDate);
+		VotingPollMgnt getDuplicateVoteStartDate = votingPollMgntRepository.getBetweenVoteDate(voteStartDate);
+		VotingPollMgnt getDuplicateVoteEndDate = votingPollMgntRepository.getBetweenVoteDate(voteEndDate);
 
 		if (!(Objects.isNull(getDuplicateVoteStartDate) && Objects.isNull(getDuplicateVoteEndDate))) {
 			isDuplicate = true;
@@ -151,5 +151,11 @@ public class VotingPollMgntServiceImpl implements VotingPollMgntService {
 		}
 
 		return isDuplicate;
+	}
+
+	@Transactional(readOnly = true)
+	public VotingPollItem findItemByVotingPollIdAndFoodName(Long id, String foodName) {
+		return votingPollItemRepository
+				.findByVotingPollManagementIdAndFoodName(id, foodName);
 	}
 }

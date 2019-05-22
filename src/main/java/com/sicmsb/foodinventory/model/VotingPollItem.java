@@ -16,6 +16,7 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.Version;
 
 @Entity
 @Table(name = "VOTING_POLL_ITEM")
@@ -34,6 +35,7 @@ public class VotingPollItem implements Serializable {
 	@Column(name = "food_name", length = 100, nullable = false)
 	private String foodName;
 
+	@Version
 	@Column(name = "total_vote", nullable = false)
 	private int totalVote;
 

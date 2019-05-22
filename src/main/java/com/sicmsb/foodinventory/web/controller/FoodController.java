@@ -16,11 +16,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sicmsb.foodinventory.dto.AvaiFoodManagementDTO;
+import com.sicmsb.foodinventory.dto.VoteFoodDTO;
+import com.sicmsb.foodinventory.dto.VotingPollItemDTO;
 import com.sicmsb.foodinventory.dto.VotingPollMgntDTO;
 import com.sicmsb.foodinventory.exception.BaseException;
 import com.sicmsb.foodinventory.model.AvaiFoodManagement;
 import com.sicmsb.foodinventory.model.EmployeeInfo;
 import com.sicmsb.foodinventory.model.Food;
+import com.sicmsb.foodinventory.model.VotingPollItem;
+import com.sicmsb.foodinventory.model.VotingPollMgnt;
 import com.sicmsb.foodinventory.model.payload.request.Header;
 import com.sicmsb.foodinventory.model.payload.response.ResponseBase;
 import com.sicmsb.foodinventory.model.payload.response.ResponseCreateFoodPayload;
@@ -29,6 +33,7 @@ import com.sicmsb.foodinventory.model.payload.response.ResponseVotingPollPayload
 import com.sicmsb.foodinventory.service.AvaiFoodItemService;
 import com.sicmsb.foodinventory.service.AvaiFoodManagementService;
 import com.sicmsb.foodinventory.service.EmployeeInfoService;
+import com.sicmsb.foodinventory.service.VotingFoodService;
 import com.sicmsb.foodinventory.service.VotingPollMgntService;
 import com.sicmsb.foodinventory.type.RoleType;
 import com.sicmsb.foodinventory.util.CommonUtil;
@@ -55,6 +60,10 @@ public class FoodController {
 
 	@Inject
 	private AvaiFoodManagementService avaiFoodManagementService;
+	
+	@Inject
+	private VotingFoodService votingFoodService;
+	
 
 	private static final Logger logger = LoggerFactory.getLogger(FoodController.class);
 
@@ -71,17 +80,17 @@ public class FoodController {
 		final Long employeeId = votingPollMgntDTO.getEmployeeId();
 		final Optional<EmployeeInfo> employee = employeeInfoService.getEmployeeInfoById(employeeId);
 
-
 		// validate employee is exist and the role must equal to admin
 		if (!employee.isPresent() || !(RoleType.ADMIN.getCode().equals(employee.get().getRoleInfo().getRoleDesc()))) {
 			throw new BaseException(100, "This employee do not have authority to create voting poll");
 		}
-		//to check the input vote start date and  vote end date is exist in database
+		// to check the input vote start date and vote end date is exist in database
 		if (votingPollMgntService.duplicateVotePeriodExist(votingPollMgntDTO.getVoteStartDate(),
 				votingPollMgntDTO.getVoteEndDate())) {
 			throw new BaseException(101, "Duplicate voting period found in dabatase.");
 		}
-		//to check the input food available start date and  food available end date is exist in database
+		// to check the input food available start date and food available end date is
+		// exist in database
 		if (votingPollMgntService.duplicateAvailablePeriodExist(votingPollMgntDTO.getFoodAvailestartDate(),
 				votingPollMgntDTO.getFoodAvailableEndDate())) {
 			throw new BaseException(102, "Duplicate food available period found in dabatase.");
@@ -98,7 +107,7 @@ public class FoodController {
 		if (votingPollMgntDTO.getVoteEndDate().compareTo(votingPollMgntDTO.getFoodAvailestartDate()) >= 0) {
 			throw new BaseException(105, " food available start date must be after vote end date");
 		}
-		
+
 		votingPollMgntService.createVotingNewVotingPoll(votingPollMgntDTO);
 		ResponseVotingPollPayload responseVotingPollPayload = new ResponseVotingPollPayload();
 		ResponseBase<ResponseVotingPollPayload> response = CommonUtil.genResponseBase(header);
@@ -130,12 +139,34 @@ public class FoodController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 401, message = "Unauthorized") })
 	@RequestMapping(value = "/food/vote", method = RequestMethod.POST, produces = "application/json")
-	public List<Food> vote() {
+	public ResponseEntity<?> vote(
+			@ApiParam("Vote food for available period.") @Valid @RequestBody VoteFoodDTO voteFoodDTO)
+			throws BaseException {
 		logger.info("Starting Vote Desired Food");
-		List<Food> foodList = new ArrayList<>();
+		
+//		Optional<EmployeeInfo> employee = votingFoodService.validationProcess(voteFoodDTO);
+		final Long employeeId = voteFoodDTO.getEmployeeId();
+		Optional<EmployeeInfo> employee = votingFoodService.validateUser(employeeId);
 
+		final VotingPollMgnt currentVotingPoll = votingFoodService.validateVotingPoll();
+
+		Long currentVotingPollId = currentVotingPoll.getId();
+		List<VotingPollItemDTO> foodList = voteFoodDTO.getVotingFoodItemList();
+		List<VotingPollItem> votingPollItemList = votingFoodService.validateVoteItem(currentVotingPollId, foodList);
+		votingFoodService.validateDuplicateVote(employeeId, votingPollItemList);
+		
+//		String employeeName = employee.get().getName();
+		
+		votingFoodService.UpdateVoteResult(votingPollItemList, employeeId);
+		
+		Header header = new Header();
+		ResponseBase<ResponseVoteOptionsPayload> response = CommonUtil.genResponseBase(header);
+		ResponseVoteOptionsPayload responseVoteOptionsPayload = new ResponseVoteOptionsPayload();
+		responseVoteOptionsPayload.setFoodVoteOptionsList(votingPollMgntService.availableFoodVoteOptionsAPIService());
+		response.setPayload(responseVoteOptionsPayload);
+		
 		logger.info("Ending Vote Desired Food");
-		return foodList;
+		return ResponseEntity.ok(response);
 	}
 
 	@ApiOperation(value = "View Voting Result", response = Food.class)

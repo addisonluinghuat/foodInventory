@@ -13,4 +13,6 @@ import com.sicmsb.foodinventory.model.VotingPollItem;
 public interface VotingPollItemRepository extends JpaRepository<VotingPollItem, Long> {
 	
 	public List<VotingPollItem> findByVotingPollManagementId (Long id);
+	
+	public VotingPollItem findByVotingPollManagementIdAndFoodName(Long id, String foodName);
 }
