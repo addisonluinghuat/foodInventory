@@ -25,14 +25,15 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	private static final Logger log = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
 	@ExceptionHandler(value = { BaseException.class })
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	protected <T> ResponseEntity<Object> handleConflict(BaseException e) {
 		Object request = requestContext.getRequestBody();
 		@SuppressWarnings("unchecked")
 		RequestBase<T> requestBase = (RequestBase<T>) request;
 
-		ResponseBase<T> responseBase = CommonUtil.genErrorResponseBase("1.0", String.valueOf(e.getCode()),
+		ResponseBase<T> responseBase = CommonUtil.genErrorResponseBase("2.0", String.valueOf(e.getCode()),
 				e.getMessage());
-		return ResponseEntity.ok(responseBase);
+		return new ResponseEntity<Object>(responseBase,HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(value = { Exception.class })
@@ -45,7 +46,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		log.error("Internal Server Error:{}", e.getMessage());
 		ResponseBase<T> responseBase = CommonUtil.genErrorResponseBase("1.0", "500", "Interal Server error");
 
-		return ResponseEntity.ok(responseBase);
+		return new ResponseEntity<Object>(responseBase,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }
