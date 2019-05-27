@@ -20,5 +20,6 @@ public interface VotingFoodService {
 	List<VotingPollItem> validateVoteItem(Long currentVotingPollId, List<VotingPollItemDTO> foodList) throws BaseException;
 
 	void validateDuplicateVote(Long employeeId, List<VotingPollItem> votingPollItemList) throws BaseException;
-
+	
+	List<VotingPollItem> getVotingPollManagement() throws BaseException;
 }

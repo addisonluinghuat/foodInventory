@@ -17,6 +17,7 @@ import com.sicmsb.foodinventory.model.VotingPollItem;
 import com.sicmsb.foodinventory.model.VotingPollMgnt;
 import com.sicmsb.foodinventory.model.VotingTransaction;
 import com.sicmsb.foodinventory.repository.VotingPollItemRepository;
+import com.sicmsb.foodinventory.repository.VotingPollMgntRepository;
 import com.sicmsb.foodinventory.repository.VotingTransactionRepository;
 
 @Transactional
@@ -34,6 +35,9 @@ public class VotingFoodServiceImpl implements VotingFoodService {
 
 	@Inject
 	private VotingTransactionRepository votingTransactionRepository;
+	
+	@Inject
+	private VotingPollMgntRepository votingPollMgntRepository;
 
 	// validate user exist
 	public Optional<EmployeeInfo> validateUser(Long employeeId) throws BaseException {
@@ -108,5 +112,15 @@ public class VotingFoodServiceImpl implements VotingFoodService {
 		int totalVoteNew = totalVoteOri + 1;
 		votingPollItem.setTotalVote(totalVoteNew);
 		votingPollItemRepository.save(votingPollItem);
+	}
+	
+	// get voting poll management from DB
+	public List<VotingPollItem> getVotingPollManagement() throws BaseException{
+		VotingPollMgnt currentPoll = votingPollMgntRepository.getBetweenVoteDate(new Date());
+		
+		List<VotingPollItem> pollItemList = votingPollItemRepository.findByVotingPollManagementId(currentPoll.getId());
+		
+		return pollItemList;
+		
 	}
 }
