@@ -16,6 +16,7 @@ import com.sicmsb.foodinventory.model.EmployeeInfo;
 import com.sicmsb.foodinventory.model.VotingPollItem;
 import com.sicmsb.foodinventory.model.VotingPollMgnt;
 import com.sicmsb.foodinventory.model.VotingTransaction;
+import com.sicmsb.foodinventory.model.payload.response.ResponseVotingResultPayload;
 import com.sicmsb.foodinventory.repository.VotingPollItemRepository;
 import com.sicmsb.foodinventory.repository.VotingPollMgntRepository;
 import com.sicmsb.foodinventory.repository.VotingTransactionRepository;
@@ -115,12 +116,32 @@ public class VotingFoodServiceImpl implements VotingFoodService {
 	}
 	
 	// get voting poll management from DB
-	public List<VotingPollItem> getVotingPollManagement() throws BaseException{
+	public VotingPollMgnt getVotingPollManagement() {
 		VotingPollMgnt currentPoll = votingPollMgntRepository.getBetweenVoteDate(new Date());
 		
-		List<VotingPollItem> pollItemList = votingPollItemRepository.findByVotingPollManagementId(currentPoll.getId());
+		return currentPoll;
+	}
+	
+	// get voting poll item list from Poll Management Id
+	public List<VotingPollItem> getVotingItem(Long id) {
+		List<VotingPollItem> pollItemList = votingPollItemRepository.findByVotingPollManagementId(id);
 		
 		return pollItemList;
-		
 	}
+	
+	// mapped into vote result payload
+	public ResponseVotingResultPayload mappedIntoVoteResultPayload(VotingPollMgnt votingPollManagement, List<VotingPollItem> votingPollItemList) {
+		
+		ResponseVotingResultPayload returnPayload = new ResponseVotingResultPayload();
+		returnPayload.setVotingManagementId(votingPollManagement.getId());
+		returnPayload.setDescription(votingPollManagement.getDescription());
+		returnPayload.setFoodAvaiStartDate(votingPollManagement.getFoodAvailableStartDate());
+		returnPayload.setFoodAvaiEndDate(votingPollManagement.getFoodAvailableEndDate());
+		returnPayload.setVoteStartDate(votingPollManagement.getVoteStartDate());
+		returnPayload.setVoteEndDate(votingPollManagement.getVoteEndDate());
+		returnPayload.setVotingPollItemList(votingPollItemList);
+		
+		return returnPayload;
+	}
+	
 }

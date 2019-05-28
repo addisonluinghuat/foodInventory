@@ -31,6 +31,7 @@ import com.sicmsb.foodinventory.model.payload.response.ResponseBase;
 import com.sicmsb.foodinventory.model.payload.response.ResponseCreateFoodPayload;
 import com.sicmsb.foodinventory.model.payload.response.ResponseVoteOptionsPayload;
 import com.sicmsb.foodinventory.model.payload.response.ResponseVotingPollPayload;
+import com.sicmsb.foodinventory.model.payload.response.ResponseVotingResultPayload;
 import com.sicmsb.foodinventory.repository.VotingPollMgntRepository;
 import com.sicmsb.foodinventory.service.AvaiFoodItemService;
 import com.sicmsb.foodinventory.service.AvaiFoodManagementService;
@@ -174,13 +175,20 @@ public class FoodController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
 			@ApiResponse(code = 401, message = "Unauthorized") })
 	@RequestMapping(value = "/food/voting-result", method = RequestMethod.GET, produces = "application/json")
-	public List<VotingPollItem> votingResult() throws BaseException {
+	public ResponseEntity<?> votingResult() throws BaseException {
 		logger.info("Starting View Voting Result");
 		
-		List<VotingPollItem> currentPollList = votingFoodService.getVotingPollManagement();
+		VotingPollMgnt currentPollManagement = votingFoodService.getVotingPollManagement();
+		List<VotingPollItem> currentPollList = votingFoodService.getVotingItem(currentPollManagement.getId()); 
+		
+		Header header = new Header();
+		ResponseBase<ResponseVotingResultPayload> response = CommonUtil.genResponseBase(header);
+		ResponseVotingResultPayload voteResultPayload = new ResponseVotingResultPayload();
+		voteResultPayload = votingFoodService.mappedIntoVoteResultPayload(currentPollManagement, currentPollList);
+		response.setPayload(voteResultPayload);
 		
 		logger.info("Ending View Voting Result");
-		return null;
+		return ResponseEntity.ok(response);
 	}
 
 	// Create Food List API

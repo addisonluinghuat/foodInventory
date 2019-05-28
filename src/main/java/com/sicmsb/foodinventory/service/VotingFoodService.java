@@ -8,6 +8,7 @@ import com.sicmsb.foodinventory.exception.BaseException;
 import com.sicmsb.foodinventory.model.EmployeeInfo;
 import com.sicmsb.foodinventory.model.VotingPollItem;
 import com.sicmsb.foodinventory.model.VotingPollMgnt;
+import com.sicmsb.foodinventory.model.payload.response.ResponseVotingResultPayload;
 
 public interface VotingFoodService {
 
@@ -21,5 +22,9 @@ public interface VotingFoodService {
 
 	void validateDuplicateVote(Long employeeId, List<VotingPollItem> votingPollItemList) throws BaseException;
 	
-	List<VotingPollItem> getVotingPollManagement() throws BaseException;
+	VotingPollMgnt getVotingPollManagement();
+	
+	List<VotingPollItem> getVotingItem(Long id);
+	
+	ResponseVotingResultPayload mappedIntoVoteResultPayload(VotingPollMgnt votingPollManagement, List<VotingPollItem> votingPollItemList);
 }
