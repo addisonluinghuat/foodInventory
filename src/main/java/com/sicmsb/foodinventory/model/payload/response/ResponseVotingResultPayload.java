@@ -3,22 +3,28 @@ package com.sicmsb.foodinventory.model.payload.response;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sicmsb.foodinventory.dto.VotingPollItemDTO;
 import com.sicmsb.foodinventory.model.VotingPollItem;
 
 public class ResponseVotingResultPayload {
 	private Long votingManagementId;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date voteStartDate;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date voteEndDate;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date foodAvaiStartDate;
 	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date foodAvaiEndDate;
 	
 	private String description;
 	
-	private List<VotingPollItem> votingPollItemList;
+	private List<VotingPollItemDTO> votingPollItemList;
 
 	public Long getVotingManagementId() {
 		return votingManagementId;
@@ -68,11 +74,11 @@ public class ResponseVotingResultPayload {
 		this.description = description;
 	}
 
-	public List<VotingPollItem> getVotingPollItemList() {
+	public List<VotingPollItemDTO> getVotingPollItemList() {
 		return votingPollItemList;
 	}
 
-	public void setVotingPollItemList(List<VotingPollItem> votingPollItemList) {
+	public void setVotingPollItemList(List<VotingPollItemDTO> votingPollItemList) {
 		this.votingPollItemList = votingPollItemList;
 	}
 

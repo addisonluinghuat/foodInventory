@@ -3,6 +3,7 @@ package com.sicmsb.foodinventory.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.slf4j.Logger;
@@ -55,6 +56,29 @@ public class DateUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return returnDate;
+	}
+	
+	public static Date formatDateYMD(Date inputDate) {
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);	
+		String date = simpleDateFormat.format(inputDate);
+		Date returnDate = new Date();
+		try {
+			returnDate = new SimpleDateFormat(pattern).parse(date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return returnDate;
+	}
+	
+	public static Date addOneDate(Date inputDate) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(inputDate);
+        c.add(Calendar.DATE, 1);
+        Date returnDate = c.getTime();
+		
 		return returnDate;
 	}
 }

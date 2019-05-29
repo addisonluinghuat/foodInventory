@@ -136,13 +136,40 @@ public class VotingFoodServiceImpl implements VotingFoodService {
 		ResponseVotingResultPayload returnPayload = new ResponseVotingResultPayload();
 		returnPayload.setVotingManagementId(votingPollManagement.getId());
 		returnPayload.setDescription(votingPollManagement.getDescription());
-		returnPayload.setFoodAvaiStartDate(votingPollManagement.getFoodAvailableStartDate());
-		returnPayload.setFoodAvaiEndDate(votingPollManagement.getFoodAvailableEndDate());
-		returnPayload.setVoteStartDate(votingPollManagement.getVoteStartDate());
-		returnPayload.setVoteEndDate(votingPollManagement.getVoteEndDate());
-		returnPayload.setVotingPollItemList(votingPollItemList);
 		
+		returnPayload.setFoodAvaiStartDate(DateUtil.formatDateYMD(votingPollManagement.getFoodAvailableStartDate()));
+		returnPayload.setFoodAvaiStartDate(DateUtil.addOneDate(returnPayload.getFoodAvaiStartDate()));
+		
+		returnPayload.setFoodAvaiEndDate(DateUtil.formatDateYMD(votingPollManagement.getFoodAvailableEndDate()));
+		returnPayload.setFoodAvaiEndDate(DateUtil.addOneDate(returnPayload.getFoodAvaiEndDate()));
+		
+		returnPayload.setVoteStartDate(DateUtil.formatDateYMD(votingPollManagement.getVoteStartDate()));
+		returnPayload.setVoteStartDate(DateUtil.addOneDate(returnPayload.getVoteStartDate()));
+		
+		returnPayload.setVoteEndDate(DateUtil.formatDateYMD(votingPollManagement.getVoteEndDate()));
+		returnPayload.setVoteEndDate(DateUtil.addOneDate(returnPayload.getVoteEndDate()));
+		
+		returnPayload.setVotingPollItemList(pollItemListToDTO(votingPollItemList));
+	
 		return returnPayload;
+	}
+	
+	// transform poll item list into dto
+	private List<VotingPollItemDTO> pollItemListToDTO(List<VotingPollItem> votingPollItemList) {
+		List<VotingPollItemDTO> returnDTO = new ArrayList();
+		
+		for (VotingPollItem votingPollItem : votingPollItemList) {
+			VotingPollItemDTO dto = new VotingPollItemDTO();
+			dto.setId(votingPollItem.getId());
+			dto.setFoodName(votingPollItem.getFoodName());
+			dto.setTotalVote(votingPollItem.getTotalVote());
+			dto.setVotingPollManagementId(votingPollItem.getVotingPollManagementId());
+			returnDTO.add(dto);
+		}
+		
+		return returnDTO;
+		
+		
 	}
 	
 }
