@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -179,9 +180,12 @@ public class FoodController {
 		logger.info("Starting View Voting Result");
 		
 		VotingPollMgnt currentPollManagement = votingFoodService.getVotingPollManagement();
-		List<VotingPollItem> currentPollList = votingFoodService.getVotingItem(currentPollManagement.getId());
 		
-		logger.info("Date {}", new Date());
+		if (Objects.isNull(currentPollManagement)) {
+			throw new BaseException(106, "No voting result.");
+		}
+		
+		List<VotingPollItem> currentPollList = votingFoodService.getVotingItem(currentPollManagement.getId());
 		
 		Header header = new Header();
 		ResponseBase<ResponseVotingResultPayload> response = CommonUtil.genResponseBase(header);
