@@ -20,6 +20,7 @@ import com.sicmsb.foodinventory.model.payload.response.ResponseVotingResultPaylo
 import com.sicmsb.foodinventory.repository.VotingPollItemRepository;
 import com.sicmsb.foodinventory.repository.VotingPollMgntRepository;
 import com.sicmsb.foodinventory.repository.VotingTransactionRepository;
+import com.sicmsb.foodinventory.util.DateUtil;
 
 @Transactional
 @Service
@@ -117,7 +118,7 @@ public class VotingFoodServiceImpl implements VotingFoodService {
 	
 	// get voting poll management from DB
 	public VotingPollMgnt getVotingPollManagement() {
-		VotingPollMgnt currentPoll = votingPollMgntRepository.getBetweenVoteDate(new Date());
+		VotingPollMgnt currentPoll = votingPollMgntRepository.getBetweenVoteDate(DateUtil.formatTodayDateYMD());
 		
 		return currentPoll;
 	}

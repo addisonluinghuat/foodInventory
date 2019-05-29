@@ -1,6 +1,7 @@
 package com.sicmsb.foodinventory.util;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -41,5 +42,19 @@ public class DateUtil {
 			logger.error("Error formatDate", e);
 			return null;
 		}
+	}
+	
+	public static Date formatTodayDateYMD() {
+		String pattern = "yyyy-MM-dd";
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);	
+		String date = simpleDateFormat.format(new Date());
+		Date returnDate = new Date();
+		try {
+			returnDate = new SimpleDateFormat(pattern).parse(date);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return returnDate;
 	}
 }

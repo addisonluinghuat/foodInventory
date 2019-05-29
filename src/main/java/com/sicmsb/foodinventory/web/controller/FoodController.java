@@ -179,7 +179,9 @@ public class FoodController {
 		logger.info("Starting View Voting Result");
 		
 		VotingPollMgnt currentPollManagement = votingFoodService.getVotingPollManagement();
-		List<VotingPollItem> currentPollList = votingFoodService.getVotingItem(currentPollManagement.getId()); 
+		List<VotingPollItem> currentPollList = votingFoodService.getVotingItem(currentPollManagement.getId());
+		
+		logger.info("Date {}", new Date());
 		
 		Header header = new Header();
 		ResponseBase<ResponseVotingResultPayload> response = CommonUtil.genResponseBase(header);
