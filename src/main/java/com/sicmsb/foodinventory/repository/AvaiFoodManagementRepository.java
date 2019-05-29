@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.sicmsb.foodinventory.model.AvaiFoodManagement;
@@ -17,4 +18,8 @@ public interface AvaiFoodManagementRepository extends JpaRepository<AvaiFoodMana
 
 	@Query("from AvaiFoodManagement a where a.startDate = :sDate and a.endDate=:eDate")
 	public Optional<AvaiFoodManagement> findByStartDateAndEndDate(Date sDate, Date eDate);
+
+	@Query("from AvaiFoodManagement a where :createPeriod between a.startDate and a.endDate")
+	public AvaiFoodManagement getBetweenFoodCreateDate(@Param("createPeriod") Date foodCreateDate);
+
 }

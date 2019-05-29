@@ -1,9 +1,10 @@
 package com.sicmsb.foodinventory.service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -30,12 +31,12 @@ public class AvaiFoodManagementServiceImpl implements AvaiFoodManagementService 
 
 		// get data from avaiFoodManagement DTO (payload) to avaiFoodManagement model
 		// (repository - save to avaiFoodManagementDB)
-		Optional<AvaiFoodManagement> avaiFoodManagementOpt = avaiFoodManagementRepository
-				.findByStartDateAndEndDate(avaiFoodManagementDTO.getStartDate(), avaiFoodManagementDTO.getEndDate());
+//		Optional<AvaiFoodManagement> avaiFoodManagementOpt = avaiFoodManagementRepository
+//				.findByStartDateAndEndDate(avaiFoodManagementDTO.getStartDate(), avaiFoodManagementDTO.getEndDate());
 
-		if (avaiFoodManagementOpt.isPresent()) {
-			throw new BaseException(102, "Duplicate");
-		}
+//		if (avaiFoodManagementOpt.isPresent()) {
+//			throw new BaseException(102, "Duplicate");
+//		}
 
 		AvaiFoodManagement avaiFoodMgnt = new AvaiFoodManagement();
 		avaiFoodMgnt.setStartDate(avaiFoodManagementDTO.getStartDate());
@@ -50,12 +51,25 @@ public class AvaiFoodManagementServiceImpl implements AvaiFoodManagementService 
 	@Override
 	@Transactional(readOnly = true)
 	public AvaiFoodManagementDTO getCurrPerFoodManagement() {
+
+		Calendar c = Calendar.getInstance();
+
 		Date currPer = new Date();
 		AvaiFoodManagementDTO avaiFoodManagementDTO = new AvaiFoodManagementDTO();
 		AvaiFoodManagement avaiFoodManagement = avaiFoodManagementRepository.findCurrPerFoodManagement(currPer)
 				.orElse(new AvaiFoodManagement());
-		avaiFoodManagementDTO.setStartDate(avaiFoodManagement.getStartDate());
-		avaiFoodManagementDTO.setEndDate(avaiFoodManagement.getEndDate());
+
+		c.setTime(avaiFoodManagement.getStartDate());
+		c.add(Calendar.DATE, 1);
+		Date startDate = c.getTime();
+
+		c.setTime(avaiFoodManagement.getEndDate());
+		c.add(Calendar.DATE, 1);
+		Date endDate = c.getTime();
+
+		avaiFoodManagementDTO.setStartDate(startDate);
+		avaiFoodManagementDTO.setEndDate(endDate);
+
 		List<AvaiFoodItemDTO> avaiFoodItemDtos = new ArrayList<>();
 		for (AvaiFoodItem avaiFoodItem : avaiFoodManagement.getAvaiFoodItems()) {
 			AvaiFoodItemDTO avaiFoodItemDTO = new AvaiFoodItemDTO(avaiFoodItem.getId(), avaiFoodItem.getFoodName());
@@ -66,6 +80,69 @@ public class AvaiFoodManagementServiceImpl implements AvaiFoodManagementService 
 
 		return avaiFoodManagementDTO;
 
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean duplicateCreateFoodPeriod(Date createFoodStartDate, Date createFoodEndDate) {
+
+		boolean isDuplicate = false;
+
+		AvaiFoodManagement duplicateCreateFoodStartDate = avaiFoodManagementRepository
+				.getBetweenFoodCreateDate(createFoodStartDate);
+		AvaiFoodManagement duplicateCreateFoodEndDate = avaiFoodManagementRepository
+				.getBetweenFoodCreateDate(createFoodEndDate);
+
+		if (!(Objects.isNull(duplicateCreateFoodStartDate) && Objects.isNull(duplicateCreateFoodEndDate))) {
+
+			isDuplicate = true;
+
+		}
+
+		return isDuplicate;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean checkDuplicateFood(AvaiFoodManagementDTO avaiFoodManagementDTO) {
+
+		boolean isDuplicate = false;
+
+		List<AvaiFoodItemDTO> foodList = avaiFoodManagementDTO.getAvailableFoodItemList();
+
+		for (int i = 0; i < foodList.size(); i++) {
+			for (int k = i + 1; k < foodList.size(); k++) {
+
+				if (foodList.get(i).getFoodName().equalsIgnoreCase(foodList.get(k).getFoodName())) {
+
+					isDuplicate = true;
+
+				}
+			}
+		}
+
+		return isDuplicate;
+
+	}
+
+	@Override
+	public boolean checkMandatoryField(AvaiFoodManagementDTO avaiFoodManagementDTO) {
+
+		boolean isFalse = false;
+		List<AvaiFoodItemDTO> foodList = avaiFoodManagementDTO.getAvailableFoodItemList();
+
+		for (AvaiFoodItemDTO foodItem : foodList) {
+
+			if (foodItem.getFoodName().equals("string") || foodItem.getFoodName().trim().isEmpty()
+					|| foodItem.getFoodName() == null) {
+
+				isFalse = true;
+
+			}
+
+		}
+
+		return isFalse;
 	}
 
 }

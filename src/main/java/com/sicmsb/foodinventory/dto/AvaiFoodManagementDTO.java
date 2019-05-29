@@ -13,6 +13,9 @@ public class AvaiFoodManagementDTO {
 	// item", readOnly = true)
 	// private Long id;
 
+	@ApiModelProperty(value = "The unique identifier of the given voting poll", readOnly = true)
+	private Long employeeId;
+
 	@ApiModelProperty(value = "Start date of the available food management", required = true)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private Date startDate;
@@ -29,11 +32,20 @@ public class AvaiFoodManagementDTO {
 
 	}
 
-	public AvaiFoodManagementDTO(Date startDate, Date endDate) {
+	public AvaiFoodManagementDTO(Long employeeId, Date startDate, Date endDate) {
 		super();
 		// this.id = id;
+		this.employeeId = employeeId;
 		this.startDate = startDate;
 		this.endDate = endDate;
+	}
+
+	public Long getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(Long employeeId) {
+		this.employeeId = employeeId;
 	}
 
 	public List<AvaiFoodItemDTO> getAvailableFoodItemList() {

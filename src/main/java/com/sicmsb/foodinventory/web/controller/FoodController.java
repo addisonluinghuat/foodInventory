@@ -200,7 +200,8 @@ public class FoodController {
 	// Create Food List API
 	@ApiOperation(value = "Create List of Food for current period", response = Food.class)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Ok"),
-			@ApiResponse(code = 401, message = "Unauthorized") })
+			@ApiResponse(code = 401, message = "Unauthorized"), @ApiResponse(code = 100, message = "Invalid Input"),
+			@ApiResponse(code = 101, message = "Duplicate record found in database") })
 	@RequestMapping(value = "/food/list", method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<?> createFood(
 			@ApiParam("Create food list for current period.") @Valid @RequestBody AvaiFoodManagementDTO avaiFoodManagementDTO)
@@ -209,6 +210,43 @@ public class FoodController {
 
 		// Set payload header
 		Header header = new Header();
+
+		// new get employee ID from the request payload pass by DTO
+		final Long employeeId = avaiFoodManagementDTO.getEmployeeId();
+		final Optional<EmployeeInfo> employee = employeeInfoService.getEmployeeInfoById(employeeId);
+
+		// validate employee is exist and role must equal to admin
+		if (!employee.isPresent() || !(RoleType.ADMIN.getCode().equals(employee.get().getRoleInfo().getRoleDesc()))) {
+
+			throw new BaseException(100, "This employee do not have authority to create voting poll");
+		}
+
+		// validate duplicate create food period
+		if (avaiFoodManagementService.duplicateCreateFoodPeriod(avaiFoodManagementDTO.getStartDate(),
+				avaiFoodManagementDTO.getStartDate())) {
+
+			throw new BaseException(101, "Duplicate create food period found.");
+
+		}
+
+		// validate duplicate food in foodList
+		if (avaiFoodManagementService.checkDuplicateFood(avaiFoodManagementDTO)) {
+
+			throw new BaseException(101, "Duplicate food found.");
+
+		}
+
+		// Mandatory field
+		if (avaiFoodManagementService.checkMandatoryField(avaiFoodManagementDTO)) {
+
+			throw new BaseException(105, "Mandatory field should be filled in.");
+
+		}
+
+		// End date cannot be smaller than start date
+		if (avaiFoodManagementDTO.getStartDate().compareTo(avaiFoodManagementDTO.getEndDate()) > 0) {
+			throw new BaseException(103, "Create food start date cannot after create food end date");
+		}
 
 		// set avaifoodManagement information in avaiFoodManagement object
 		AvaiFoodManagement avaiFoodManagement = avaiFoodManagementService.createFoodManagement(avaiFoodManagementDTO);
@@ -226,6 +264,7 @@ public class FoodController {
 			// foodItem.setAvaiFoodManagementId(avaiFoodManagement.getId());
 
 			// Set food item and save to avai food item table
+
 			avaiFoodItemService.createFoodItem(foodItem, avaiFoodManagement);
 
 		});
