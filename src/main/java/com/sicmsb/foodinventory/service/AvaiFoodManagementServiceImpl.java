@@ -1,7 +1,6 @@
 package com.sicmsb.foodinventory.service;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +16,7 @@ import com.sicmsb.foodinventory.exception.BaseException;
 import com.sicmsb.foodinventory.model.AvaiFoodItem;
 import com.sicmsb.foodinventory.model.AvaiFoodManagement;
 import com.sicmsb.foodinventory.repository.AvaiFoodManagementRepository;
+import com.sicmsb.foodinventory.util.DateUtil;
 
 @Transactional
 @Service
@@ -52,23 +52,13 @@ public class AvaiFoodManagementServiceImpl implements AvaiFoodManagementService 
 	@Transactional(readOnly = true)
 	public AvaiFoodManagementDTO getCurrPerFoodManagement() {
 
-		Calendar c = Calendar.getInstance();
-
 		Date currPer = new Date();
 		AvaiFoodManagementDTO avaiFoodManagementDTO = new AvaiFoodManagementDTO();
 		AvaiFoodManagement avaiFoodManagement = avaiFoodManagementRepository.findCurrPerFoodManagement(currPer)
 				.orElse(new AvaiFoodManagement());
 
-		c.setTime(avaiFoodManagement.getStartDate());
-		c.add(Calendar.DATE, 1);
-		Date startDate = c.getTime();
-
-		c.setTime(avaiFoodManagement.getEndDate());
-		c.add(Calendar.DATE, 1);
-		Date endDate = c.getTime();
-
-		avaiFoodManagementDTO.setStartDate(startDate);
-		avaiFoodManagementDTO.setEndDate(endDate);
+		avaiFoodManagementDTO.setStartDate(DateUtil.addOneDate(avaiFoodManagement.getStartDate()));
+		avaiFoodManagementDTO.setEndDate(DateUtil.addOneDate(avaiFoodManagement.getEndDate()));
 
 		List<AvaiFoodItemDTO> avaiFoodItemDtos = new ArrayList<>();
 		for (AvaiFoodItem avaiFoodItem : avaiFoodManagement.getAvaiFoodItems()) {
